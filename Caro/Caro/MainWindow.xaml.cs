@@ -177,31 +177,59 @@ namespace Caro
 
         private void frmMain_Loaded(object sender, RoutedEventArgs e)
         {
-
+            btnGui.IsEnabled = false;
+            btnChange.IsEnabled = false;
         }
 
         private void btnGui_Click(object sender, RoutedEventArgs e)
         {
-            string t = txtChat.Text;
-            _socket.Emit("ChatMessage", t);
+            if (type == 1 || type == 2)
+            {
+                StackPanel _khunggui;
+                Border br = new Border();
+                br.BorderThickness = new Thickness(1);
+                br.BorderBrush = Brushes.Black;
+                _khunggui = new StackPanel();
+                Label lb1 = new Label();
+                Label lb2 = new Label();
+                lb1.Content = txtName.Text + "\t" + DateTime.Now.ToLongTimeString();
+                lb2.Content = txtChat.Text;
+                _khunggui.Children.Add(br);
+                _khunggui.Children.Add(lb1);
+
+                _khunggui.Children.Add(lb2);
+
+                panelChat.Children.Add(_khunggui);
+            }
+            else
+            {
+                string t = txtChat.Text;
+                _socket.Emit("ChatMessage", t);
+            }
         }
 
         private void btnNguoiNguoi_Click(object sender, RoutedEventArgs e)
         {
             type = 1;
+            btnGui.IsEnabled = true;
+            btnChange.IsEnabled = false;
         }
 
         private void btnNguoiMay_Click(object sender, RoutedEventArgs e)
         {
             type = 2;
+            btnGui.IsEnabled = true;
+            btnChange.IsEnabled = false;
         }
 
         private void btnNguoiOnline_Click(object sender, RoutedEventArgs e)
         {
             type = 3;
+            btnGui.IsEnabled = true;
+            btnChange.IsEnabled = true;
             string name = txtName.Text;
             StackPanel _stackpanel;
-            _socket = IO.Socket("ws://gomoku-lajosveres.rhcloud.com:8000");
+            _socket = IO.Socket(Caro.Properties.Settings.Default.IP);
             _socket.On(Socket.EVENT_CONNECT, () =>
             {
                 Console.WriteLine("connected");
@@ -345,8 +373,11 @@ namespace Caro
         private void btnMayOnline_Click(object sender, RoutedEventArgs e)
         {
             type = 4;
+            btnGui.IsEnabled = true;
+            btnChange.IsEnabled = true;
+            txtName.Text = "Robot";
             string name = txtName.Text;
-            _socket = IO.Socket("ws://gomoku-lajosveres.rhcloud.com:8000");
+            _socket = IO.Socket(Caro.Properties.Settings.Default.IP);
             _socket.On(Socket.EVENT_CONNECT, () =>
             {
                 Console.WriteLine("connected");
